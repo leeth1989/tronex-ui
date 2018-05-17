@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import Header from '../components/header';
-import {Layout, Menu, Breadcrumb } from 'antd';
+import {Layout } from 'antd';
 import Footer from '../components/footer';
 // import { Link } from 'dva/router';
 import DetailTable from '../components/detail_table';

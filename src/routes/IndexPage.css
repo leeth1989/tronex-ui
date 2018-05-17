@@ -1,4 +1,6 @@
-
+body {
+  background: #03041a;
+}
 .normal {
   font-family: Georgia, sans-serif;
   margin-top: 3em;
@@ -36,9 +38,36 @@
   animation: updatenew 1s;
 }
 .logo {
-  color: #f7f7f7;
+  /* color: #69c0ff; */
+  background-image: linear-gradient(-80deg,#0be49b,#14cbd9);
+  box-shadow: 0 0 25px 0 #0c7563;
+  border-radius: 2px;
+  padding: 11px 20px 9px 23px;
+  color: #fff;
+  letter-spacing: .01px;
+  cursor: pointer;
+  font-weight: normal;
+  font-size: 20px;
 }
 
 .search-btn {
   float: right;
+}
+
+.ant-layout-header,
+.ant-layout-content,
+.ant-layout-footer {
+  background: #03041a;
+}
+.ant-layout-footer {
+  color: hsla(0,0%,83%,.5);
+}
+
+.ant-layout-content .search-bar .ant-input-suffix button {
+  background-image: linear-gradient(-80deg,#0be49b,#14cbd9);
+  border-color: #0be49b;
+}
+
+.table-custom {
+  background: #212529;
 }

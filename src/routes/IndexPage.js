@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import './IndexPage.css';
-import {Layout, Menu, Breadcrumb } from 'antd';
+import {Layout} from 'antd';
 import List from '../components/page_list';
 import Header from '../components/header';
 import Footer from '../components/footer';

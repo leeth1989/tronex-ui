@@ -1,6 +1,6 @@
 import React from 'react';
-import {Layout, Menu, Breadcrumb } from 'antd';
-const { Header, Content, Footer } = Layout;
+import {Layout} from 'antd';
+const { Header} = Layout;
 
 const H = () => {
   return (

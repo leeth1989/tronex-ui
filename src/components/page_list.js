@@ -2,6 +2,7 @@ import { Table, Button, Icon, Divider, Col, Input, Row } from 'antd';
 import React from 'react';
 import reqwest from 'reqwest';
 import { Link } from 'dva/router';
+import Config from '../utils/config';
 
 const ButtonGroup = Button.Group;
 const Search = Input.Search;
@@ -20,7 +21,7 @@ const dataSource = [/*{
   address: '西湖区湖底公园1号'
 }*/];
 
-const serverHost = 'http://127.0.0.1:8080'
+const serverHost = Config.host;
 
 class List extends React.PureComponent {
   constructor(props) {
@@ -185,7 +186,7 @@ class List extends React.PureComponent {
         </ButtonGroup>
       </Col>
       <Col span={6}>
-        <Search placeholder="Height or ID" onSearch={this.search.bind(this)} enterButton />
+        <Search placeholder="Height or ID" onSearch={this.search.bind(this)} enterButton className="search-bar" />
       </Col>
       </Row>
       <Divider/>
@@ -198,6 +199,7 @@ class List extends React.PureComponent {
         }}
         pagination={false}
         loading={this.state.loading}
+        className="table-custom"
       />
       <Divider/>
       {pageNav}

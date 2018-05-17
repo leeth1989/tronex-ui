@@ -2,7 +2,8 @@ import { Table, Divider } from 'antd';
 import React from 'react';
 import reqwest from 'reqwest';
 import { Link } from 'dva/router';
-import {Layout, Menu, Breadcrumb } from 'antd';
+import {Breadcrumb } from 'antd';
+import Config from '../utils/config';
 
 
 const dataSource = [/*{
@@ -26,7 +27,7 @@ const nameMap = {
   'witness': 'Witness'
 }
 
-const serverHost = 'http://127.0.0.1:8080'
+const serverHost = Config.host;
 
 class List extends React.PureComponent {
   constructor(props) {
