@@ -1,0 +1,6 @@
+.detail-row td {
+  border-bottom: none !important;
+  padding-top: 7px !important;
+  padding-bottom: 7px !important;
+  /* font-size: 12px; */
+}
