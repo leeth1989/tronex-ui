@@ -1,4 +1,5 @@
-body {
+body,
+.ant-layout {
   background: #03041a;
 }
 .normal {
@@ -59,6 +60,20 @@ body {
 .ant-layout-footer {
   background: #03041a;
 }
+
+@media (min-width: 1300px) {
+  .ant-layout-header,
+  .ant-layout-content {
+    width: 1180px;
+    margin: 0 auto;
+  
+  }
+}
+
+.ant-layout-header {
+  margin-top: 30px;
+}
+
 .ant-layout-footer {
   color: hsla(0,0%,83%,.5);
 }
@@ -68,6 +83,32 @@ body {
   border-color: #0be49b;
 }
 
-.table-custom {
-  background: #212529;
+/* .table-custom , */
+.table-custom .ant-table-thead > tr > th {
+/* .table-custom .ant-table-tbody > tr > td  { */
+  background: #222339;
+  color: #fff;
+  font-weight: bold;
+}
+
+.table-custom .ant-table-thead > tr:first-child > th:first-child {
+  border-top-left-radius: 2px !important;
+
+}
+
+.table-custom .ant-table-thead > tr:first-child > th:last-child {
+  border-top-right-radius: 2px !important;
+
+}
+
+
+
+.table-custom .ant-table-tbody > tr > td,
+.table-custom .ant-table-tbody > tr > td a {
+  color: #212629;
+}
+
+.table-custom .ant-table-tbody > tr > td a {
+  font-weight: bold;
+  text-decoration: underline;
 }

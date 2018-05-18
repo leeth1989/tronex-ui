@@ -99,7 +99,7 @@ class List extends React.Component {
     this.setState({ loading: true });
     reqwest({
       // url: 'https://randomuser.me/api',
-      url: serverHost + '/v1/block/' + this.props.id,
+      url: serverHost + '/v1/address/' + this.props.address,
       // method: 'get',
       // data: {
       //   results: 10,
@@ -108,10 +108,6 @@ class List extends React.Component {
       type: 'json',
     }).then((data) => {
       console.log(data);
-      const pagination = { ...this.state.pagination };
-      // Read total count from server
-      // pagination.total = data.totalCount;
-      pagination.total = 1;
 
       let dataTop = [];
       let dataBottom = [];
@@ -188,7 +184,7 @@ class List extends React.Component {
           dataSource={this.state.dataTop} 
           columns={this.columnsTop} 
           rowKey={record => record.name}
-          pagination={this.state.pagination}
+          pagination={false}
           loading={this.state.loading}
           showHeader={false}
           size="middle"
@@ -200,7 +196,7 @@ class List extends React.Component {
           dataSource={this.state.dataBottom} 
           columns={this.columnsBottom} 
           rowKey={record => Math.floor(Math.random(0,1) * 10000)}
-          pagination={this.state.pagination}
+          pagination={false}
           loading={this.state.loading}
           size="small"
           />

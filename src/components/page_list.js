@@ -40,7 +40,7 @@ class List extends React.PureComponent {
       dataIndex: 'height',
       key: 'header.height',
       render: (text, record, index) => {
-        return <Link to={`/block/${record.header.height}`}>{record.header.height}</Link>;
+        return <Link to={`/block/${record.header.height}${Config.search}`}>{record.header.height}</Link>;
       },
     }, {
       title: 'Time',
@@ -87,7 +87,6 @@ class List extends React.PureComponent {
       method: 'get',
       type: 'json',
     }).then((data) => {
-      console.log(data);
       if (params.pageIndex === 1) {
         const prevData = this.firstData;
         this.firstData = data;
@@ -132,12 +131,17 @@ class List extends React.PureComponent {
   }
 
   refresh() {
+    clearTimeout(this.timer);
     if (!this.state.loading && this.state.pageIndex === 1) {
       this.fetch({
         pageIndex: 1
       });
     };
-    setTimeout(() => {this.refresh()}, 5000);
+    this.timer = setTimeout(() => {this.refresh()}, 5000);
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timer);
   }
 
   reload() {
@@ -156,7 +160,7 @@ class List extends React.PureComponent {
     }).then((data) => {
       console.log(data);
       if (data) {
-        window.location.hash = '#/block/' + data.header.height;
+        window.location.hash = '#/block/' + data.header.height + Config.search;
       }
     }).fail(() => {
       alert('not found');
