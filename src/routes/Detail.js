@@ -14,7 +14,7 @@ function Detail({ match }) {
   console.log(match)
   return (<Layout className="layout">
     <Header></Header>
-    <Content style={{ padding: '0 50px' }}>
+    <Content >
       {/* {<Breadcrumb style={{ margin: '16px 0' }}>
         <Breadcrumb.Item><Link to="/">Home</Link></Breadcrumb.Item>
         <Breadcrumb.Item>{match.params.id}</Breadcrumb.Item>

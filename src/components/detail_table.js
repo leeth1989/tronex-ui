@@ -5,17 +5,6 @@ import { Link } from 'dva/router';
 import {Breadcrumb } from 'antd';
 import Config from '../utils/config';
 
-const ButtonGroup = Button.Group;
-
-const dataSource = [/*{
-  key: '1',
-  name: 'name 1',
-  value: 'value of name 1'
-}, {
-  key: '2',
-  name: 'name 2',
-  value: 'value of name 2'
-}*/];
 
 const nameMap = {
   'height': 'Height',
@@ -33,7 +22,6 @@ const serverHost = Config.host;
 
 class List extends React.Component {
   constructor(props) {
-    console.log('constructor', props.id)
     super(props);
     this.state = {
       dataTop: [],
@@ -67,10 +55,23 @@ class List extends React.Component {
         dataIndex: 'contractType'
       },{
         title: 'From',
-        dataIndex: 'from'
-      },{
+        dataIndex: 'from',
+        render: (text, record, index) => {
+          return <Link to={`/account/${record.from}${Config.search}`}>{record.from}</Link>;
+        }
+      },
+      {
+        title: '',
+        render: (text, record, index) => {
+          return <Icon type="swap-right" />;
+        }
+      },
+      {
         title: 'To',
-        dataIndex: 'to'
+        dataIndex: 'to',
+        render: (text, record, index) => {
+          return <Link to={`/account/${record.to}${Config.search}`}>{record.to}</Link>;
+        }
       },{
         title: 'Amount',
         dataIndex: 'amount'
@@ -86,7 +87,6 @@ class List extends React.Component {
   // }
 
   componentDidUpdate() {
-    console.log('componentDidUpdate',this.props.id, this.id)
     if (this.props.id !== this.id) {
       this.fetch();
       this.id = this.props.id;
@@ -95,7 +95,6 @@ class List extends React.Component {
   }
 
   fetch = (params = {}) => {
-    console.log('params:', params);
     this.setState({ loading: true });
     reqwest({
       // url: 'https://randomuser.me/api',
@@ -107,7 +106,6 @@ class List extends React.Component {
       // },
       type: 'json',
     }).then((data) => {
-      console.log(data);
       const pagination = { ...this.state.pagination };
       // Read total count from server
       // pagination.total = data.totalCount;

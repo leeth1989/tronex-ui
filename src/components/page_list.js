@@ -1,11 +1,10 @@
-import { Table, Button, Icon, Divider, Col, Input, Row } from 'antd';
+import { Table, Button, Icon, Divider, Col, Row } from 'antd';
 import React from 'react';
 import reqwest from 'reqwest';
-import { Link } from 'dva/router';
-import Config from '../utils/config';
+// import Config from '../utils/config';
 
 const ButtonGroup = Button.Group;
-const Search = Input.Search;
+// const Search = Input.Search;
 
 const dataSource = [/*{
   key: '1',
@@ -21,7 +20,7 @@ const dataSource = [/*{
   address: '西湖区湖底公园1号'
 }*/];
 
-const serverHost = Config.host;
+// const serverHost = Config.host;
 
 class List extends React.PureComponent {
   constructor(props) {
@@ -35,6 +34,8 @@ class List extends React.PureComponent {
 
     this.firstData = [];
 
+    this.columns = this.props.columns;
+    /*
     this.columns = [{
       title: 'Height',
       dataIndex: 'height',
@@ -60,7 +61,7 @@ class List extends React.PureComponent {
         return record.header.witness;
       },
       key: 'header.witness',
-    }];    
+    }];    */
   }
 
   // handleTableChange = (pagination, filters, sorter) => {
@@ -83,20 +84,23 @@ class List extends React.PureComponent {
   fetch(params) {
     this.setState({ loading: true });
     reqwest({
-      url: serverHost + '/v1/blocks/page/' + params.pageIndex,
+      url: this.props.fetchUrl(params),
+      // url: serverHost + '/v1/blocks/page/' + params.pageIndex,
       method: 'get',
       type: 'json',
     }).then((data) => {
       if (params.pageIndex === 1) {
         const prevData = this.firstData;
-        this.firstData = data;
+        /*
         const prevHeight = prevData[0] ? prevData[0].header.height : 0;
 
         data.forEach((d, index) => {
           if (d.header.height > prevHeight) {
             d.isNew = true;
           }
-        })
+        })*/
+        data = this.props.fetchCallback(params, prevData, data);
+        this.firstData = data;
       }
       this.setState({
         loading: false,
@@ -152,15 +156,15 @@ class List extends React.PureComponent {
 
   search(value) {
     reqwest({
-      url: serverHost + '/v1/block/search',
+      url: this.props.searchUrl(value),
+      // url: serverHost + '/v1/block/search',
       data: {
         q: value
       },
       type: 'json',
     }).then((data) => {
-      console.log(data);
       if (data) {
-        window.location.hash = '#/block/' + data.header.height + Config.search;
+        this.props.searchCallback(data);
       }
     }).fail(() => {
       alert('not found');
@@ -180,7 +184,9 @@ class List extends React.PureComponent {
       </Button>
     </ButtonGroup>);
     return (<div>
+      {this.props.search || this.props.pagination ? 
       <Row>
+      {this.props.pagination ? 
       <Col span={18}>
         {pageNav} &nbsp;&nbsp;
         <ButtonGroup>
@@ -189,15 +195,18 @@ class List extends React.PureComponent {
           </Button>
         </ButtonGroup>
       </Col>
+       : <Col span={18} /> }
+       {this.props.search ? 
       <Col span={6}>
-        <Search placeholder="Height or ID" onSearch={this.search.bind(this)} enterButton className="search-bar" />
+        {/* <Search placeholder={this.props.searchPlaceholder} onSearch={this.search.bind(this)} enterButton className="search-bar" /> */}
       </Col>
-      </Row>
-      <Divider/>
+       : <Col span={6} /> }
+      </Row> : null}
+      {this.props.search || this.props.pagination ? <Divider/> : null}
       <Table 
         dataSource={this.state.data} 
         columns={this.columns} 
-        rowKey={record => record.header.height}
+        rowKey={this.props.rowKey}
         rowClassName={(record, index)=>{
           return record.isNew ? 'new': '';
         }}
@@ -206,9 +215,13 @@ class List extends React.PureComponent {
         className="table-custom"
       />
       <Divider/>
-      {pageNav}
+      {this.props.search || this.props.pagination ? pageNav : null}
     </div>);
   }
+}
+List.props = {
+  search: true,
+  pagination: true
 }
 
 export default List;

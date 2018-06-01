@@ -1,32 +1,26 @@
-import { Table, Divider, Button, Icon, Col, Row } from 'antd';
+import { Table, Divider, Icon} from 'antd';
 import React from 'react';
 import reqwest from 'reqwest';
 import { Link } from 'dva/router';
 import {Breadcrumb } from 'antd';
 import Config from '../utils/config';
 
-const ButtonGroup = Button.Group;
+// const ButtonGroup = Button.Group;
 
-const dataSource = [/*{
-  key: '1',
-  name: 'name 1',
-  value: 'value of name 1'
-}, {
-  key: '2',
-  name: 'name 2',
-  value: 'value of name 2'
-}*/];
+
 
 const nameMap = {
-  'height': 'Height',
-  'parentID': 'Parent ID',
-  'sig': 'Signature',
-  'size': 'Size',
-  'time': 'Time',
-  'txCount': 'TX Count',
-  'txTrieRoot': 'TX Trie Root',
-  'witness': 'Witness',
-  'id': 'ID'
+  'accountName': 'Account Name',
+  'accountType': 'Account Type',
+  'address': 'Address',
+  'balance': 'Balance',
+  'bandwidth': 'Bandwidth',
+  'committee': 'Is Committee',
+  'witness': 'Is Witness',
+  'createTime': 'Create Time',
+  'latestOperationTime': 'Latest Operation Time',
+  'latestWithdrawTime': 'Latest Withdraw Time',
+  'netUsage': 'Net Usage'
 }
 
 const serverHost = Config.host;
@@ -53,7 +47,30 @@ class List extends React.Component {
           return nameMap[text] || text;
         },
         align: 'right',
-        width: 150
+        width: 200
+      },
+      {
+        title: 'Value',
+        dataIndex: 'value',
+        render: (text, record, index) => {
+          if (typeof record.value === 'boolean') {
+            return record.value ? <Icon type="check" style={{color: 'RGBA(26, 188, 156, 1.00)'}}/> : <Icon type="close" style={{color:'RGBA(231, 76, 60, 1.00)'}} />;
+          } else {
+            return record.value
+          }
+        }
+      }
+    ]
+
+    this.columnsAsset = [
+      {
+        title: 'Name',
+        dataIndex: 'name',
+        render: (text, record, index) => {
+          return nameMap[text] || text;
+        },
+        align: 'right',
+        width: 200
       },
       {
         title: 'Value',
@@ -63,27 +80,17 @@ class List extends React.Component {
 
     this.columnsBottom = [
       {
-        title: 'Contract Type',
-        dataIndex: 'contractType'
+        title: 'Vote Address',
+        dataIndex: 'voteAddress',
+        width: 350
       },{
-        title: 'From',
-        dataIndex: 'from'
-      },{
-        title: 'To',
-        dataIndex: 'to'
-      },{
-        title: 'Amount',
-        dataIndex: 'amount'
+        title: 'Vote Count',
+        dataIndex: 'voteCount',
+        align: 'left'
       }
     ]
   }
 
-  // shouldComponentUpdate(nextProps) {
-  //   if (this.props.id !== nextProps) {
-
-  //   }
-  //   return true;
-  // }
 
   componentDidUpdate() {
     console.log('componentDidUpdate',this.props.id, this.id)
@@ -95,11 +102,10 @@ class List extends React.Component {
   }
 
   fetch = (params = {}) => {
-    console.log('params:', params);
+    console.log('params:', params, this.props.id);
     this.setState({ loading: true });
     reqwest({
-      // url: 'https://randomuser.me/api',
-      url: serverHost + '/v1/address/' + this.props.address,
+      url: serverHost + '/v1/accounts/' + this.props.id,
       // method: 'get',
       // data: {
       //   results: 10,
@@ -110,33 +116,43 @@ class List extends React.Component {
       console.log(data);
 
       let dataTop = [];
-      let dataBottom = [];
+      let dataAsset = [];
+//      let dataBottom = [];
       
-      dataTop.push({
-        name: 'id',
-        value: data['id']
-      });
+      // dataTop.push({
+      //   name: 'id',
+      //   value: data['id']
+      // });
 
-      Object.keys(data.header).forEach((key) => {
-        if (key != 'size') {
+      Object.keys(data).forEach((key) => {
+        if (!/^(asset|votes)$/.test(key) && typeof data[key] !== 'object') {
           dataTop.push({
             name: key,
-            value: data.header[key]
+            value: data[key]
+            // value: typeof data[key] === 'boolean' ? data[key] + '' : data[key]
           })
         }
       });
+
+      Object.keys(data.asset).forEach((key) => {
+        dataAsset.push({
+          name: key,
+          value: data.asset[key]
+        })
+      });
       
 
-      data.txs.forEach((obj) => {
-        obj.contractList.forEach((_obj) => {
-          if (_obj) dataBottom.push(_obj)
-        })
-      })
+      // data.txs.forEach((obj) => {
+      //   obj.contractList.forEach((_obj) => {
+      //     if (_obj) dataBottom.push(_obj)
+      //   })
+      // })
       this.setState({
         loading: false,
-        hash: data.hash,
+        address: data.address,
         dataTop: dataTop,
-        dataBottom: dataBottom
+        dataAsset: dataAsset,
+        dataBottom: data.votes
         // pagination,
       });
     }).fail(() => {
@@ -165,10 +181,10 @@ class List extends React.Component {
     return (<div className="detail-content" id={this.props.id} >
       {<Breadcrumb style={{ margin: '16px 0' }}>
         <Breadcrumb.Item><Link to={"/" + Config.search}>Home</Link></Breadcrumb.Item>
-        <Breadcrumb.Item>{this.state.hash || ''}</Breadcrumb.Item>
+        <Breadcrumb.Item>{this.state.address || ''}</Breadcrumb.Item>
       </Breadcrumb>}
       <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
-      <Row>
+      {/* <Row>
         <Col span={12}>
         <Button type="default" onClick={this.goPrev.bind(this)} >
           <Icon type="left" />Previous
@@ -179,7 +195,8 @@ class List extends React.Component {
             Next<Icon type="right" />
           </Button>
         </Col>
-      </Row>
+      </Row> */}
+        <Divider orientation="left">Address</Divider>
         <Table 
           dataSource={this.state.dataTop} 
           columns={this.columnsTop} 
@@ -191,15 +208,38 @@ class List extends React.Component {
           rowClassName="detail-row"
           // onChange={this.handleTableChange} 
         />
-        <Divider orientation="left">Transactions</Divider>
+        <Divider orientation="left">Asset</Divider>
+        <Table 
+          dataSource={this.state.dataAsset} 
+          columns={this.columnsAsset} 
+          rowKey={record => record.name}
+          pagination={false}
+          loading={this.state.loading}
+          showHeader={false}
+          size="middle"
+          rowClassName="detail-row"
+          // onChange={this.handleTableChange} 
+        />
+        <Divider orientation="left">Votes</Divider>
         <Table 
           dataSource={this.state.dataBottom} 
           columns={this.columnsBottom} 
           rowKey={record => Math.floor(Math.random(0,1) * 10000)}
           pagination={false}
           loading={this.state.loading}
+          showHeader={false}
           size="small"
-          />
+          rowClassName="detail-row"
+          // onChange={this.handleTableChange} 
+        />
+        {/* <Table 
+          dataSource={this.state.dataBottom} 
+          columns={this.columnsBottom} 
+          rowKey={record => Math.floor(Math.random(0,1) * 10000)}
+          pagination={false}
+          loading={this.state.loading}
+          size="small"
+          /> */}
       </div>
     </div>);
   }
